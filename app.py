@@ -20,7 +20,15 @@ from resume_screening.screening import screen_resume
 
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "smartrecruit-local-dev-key")
+
+# Secure Flask secret key
+app.secret_key = os.environ.get("SECRET_KEY")
+
+if not app.secret_key:
+    raise RuntimeError(
+        "SECRET_KEY environment variable is not set! "
+        "Please configure it before starting SmartRecruit."
+    )
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
