@@ -1,0 +1,1144 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SmartRecruit | {{ title }}</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body {
+            background: #0b0d18;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .main-content {
+            min-width: 0;
+        }
+
+        .page-intro {
+            margin-bottom: 25px;
+        }
+
+        .analytics-heading {
+            color: #a78bfa;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .panel {
+            background: #171a2d;
+            border: 1px solid #293456;
+            border-radius: 16px;
+            padding: 22px;
+            margin-bottom: 22px;
+        }
+
+        .panel h3 {
+            color: #f1f5ff;
+            margin: 0 0 18px;
+            font-size: 17px;
+        }
+
+        .data-form {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .one-column {
+            grid-template-columns: 1fr;
+        }
+
+        .data-form input,
+        .data-form select,
+        .data-form textarea,
+        .search-input,
+        .filter-select {
+            width: 100%;
+            box-sizing: border-box;
+            background: #10162b;
+            color: #e5e7eb;
+            border: 1px solid #344164;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font: inherit;
+            outline: none;
+        }
+
+        .data-form input:focus,
+        .data-form select:focus,
+        .data-form textarea:focus {
+            border-color: #8b5cf6;
+        }
+
+        .data-form textarea {
+            resize: vertical;
+        }
+
+        .primary-button {
+            background: linear-gradient(135deg, #7655df, #9b5de5);
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .primary-button:hover {
+            opacity: 0.9;
+        }
+
+        .muted-note {
+            color: #9ca3c7;
+            font-size: 13px;
+        }
+
+        .records-panel {
+            overflow: hidden;
+        }
+
+        .records-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .records-top h3 {
+            margin: 0;
+        }
+
+        .records-tools {
+            display: grid;
+            grid-template-columns: 1fr 190px;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            min-width: 1050px;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            color: #8992ac;
+            background: #191d31;
+            font-size: 11px;
+            text-align: left;
+            padding: 15px;
+            white-space: nowrap;
+        }
+
+        .data-table td {
+            color: #cbd5e1;
+            border-bottom: 1px solid #293044;
+            padding: 15px;
+            font-size: 12px;
+            vertical-align: middle;
+        }
+
+        .data-table tr:hover td {
+            background: rgba(139, 92, 246, 0.035);
+        }
+
+        .candidate-name {
+            color: #f1f5f9;
+            font-weight: 700;
+        }
+
+        .match-badge {
+            display: inline-block;
+            padding: 7px 11px;
+            border-radius: 20px;
+            color: #4ade80;
+            background: rgba(34, 197, 94, 0.12);
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .not-screened {
+            display: inline-block;
+            padding: 7px 11px;
+            border-radius: 20px;
+            color: #9ca3af;
+            background: #292d3d;
+            font-weight: 700;
+        }
+
+        .profile-link,
+        .resume-link {
+            color: #93c5fd;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .profile-link:hover,
+        .resume-link:hover {
+            color: #c4b5fd;
+        }
+
+        .status-pill {
+            display: inline-block;
+            border-radius: 20px;
+            padding: 6px 10px;
+            font-size: 11px;
+            background: #282e46;
+            color: #c4b5fd;
+        }
+
+        .status-form {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .status-form select {
+            max-width: 120px;
+            background: #10162b;
+            border: 1px solid #344164;
+            border-radius: 8px;
+            padding: 7px;
+            color: #e5e7eb;
+            font-size: 11px;
+        }
+
+        .status-form button {
+            background: #7253d7;
+            border: none;
+            color: white;
+            border-radius: 7px;
+            padding: 7px 9px;
+            cursor: pointer;
+        }
+
+        .analysis-details {
+            margin-top: 9px;
+        }
+
+        .analysis-details summary {
+            color: #a5b4fc;
+            cursor: pointer;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .analysis-content {
+            min-width: 200px;
+            max-width: 300px;
+            margin-top: 10px;
+            white-space: normal;
+            line-height: 1.7;
+        }
+
+        .skill-tag {
+            display: inline-block;
+            margin: 3px;
+            padding: 5px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+        }
+
+        .matched {
+            color: #4ade80;
+            background: rgba(34, 197, 94, 0.12);
+        }
+
+        .missing {
+            color: #f87171;
+            background: rgba(239, 68, 68, 0.12);
+        }
+
+        .score-line {
+            margin: 7px 0;
+            color: #a5b4fc;
+        }
+
+        .flash-message {
+            padding: 12px 16px;
+            border-radius: 10px;
+            background: rgba(34, 197, 94, 0.12);
+            color: #6ee7b7;
+            margin-bottom: 18px;
+        }
+
+        .error-box {
+            padding: 12px 16px;
+            border-radius: 10px;
+            background: rgba(239, 68, 68, 0.12);
+            color: #fca5a5;
+            margin-bottom: 18px;
+        }
+
+        .summary-output {
+            background: #10162b;
+            color: #e5e7eb;
+            border: 1px solid #344164;
+            border-radius: 12px;
+            padding: 18px;
+            white-space: pre-wrap;
+            line-height: 1.7;
+            margin-top: 18px;
+        }
+
+        .copy-button {
+            background: #252c49;
+            border: 1px solid #3b466a;
+            color: #c4b5fd;
+            padding: 9px 13px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .record-count {
+            color: #9ca3c7;
+            font-size: 13px;
+        }
+
+        @media(max-width: 800px) {
+            .data-form {
+                grid-template-columns: 1fr;
+            }
+
+            .records-tools {
+                grid-template-columns: 1fr;
+            }
+
+            .records-top {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <a class="brand" href="/">
+            <div class="brand-icon">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+
+            <span>Smart<span class="brand-highlight">Recruit</span></span>
+        </a>
+
+        <p class="section-label">WORKSPACE</p>
+
+        <nav class="navigation">
+
+            <a href="/" class="nav-link">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/candidates"
+               class="nav-link {% if section == 'candidates' %}active{% endif %}">
+                <i class="fa-solid fa-users"></i>
+                <span>Candidates</span>
+            </a>
+
+            <a href="/pipeline"
+               class="nav-link {% if section == 'pipeline' %}active{% endif %}">
+                <i class="fa-solid fa-diagram-project"></i>
+                <span>Recruitment Pipeline</span>
+            </a>
+
+            <a href="/jobs"
+               class="nav-link {% if section == 'jobs' %}active{% endif %}">
+                <i class="fa-solid fa-briefcase"></i>
+                <span>Job Openings</span>
+            </a>
+
+            <a href="/resume-screening" class="nav-link">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>AI Resume Screening</span>
+            </a>
+
+            <a href="/resume-studio"
+               class="nav-link {% if section == 'resume-studio' %}active{% endif %}">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>Resume Studio</span>
+            </a>
+
+            <a href="/documents"
+               class="nav-link {% if section == 'documents' %}active{% endif %}">
+                <i class="fa-solid fa-folder-open"></i>
+                <span>Documents</span>
+            </a>
+
+            <a href="/messages"
+               class="nav-link {% if section == 'messages' %}active{% endif %}">
+                <i class="fa-solid fa-comments"></i>
+                <span>Messages</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+                <p class="breadcrumb">
+                    Workspace / {{ title }}
+                </p>
+
+                <h2>{{ title }}</h2>
+            </div>
+
+            <span class="top-avatar">EK</span>
+
+        </header>
+
+        <section class="page-intro">
+
+            <p class="analytics-heading">
+                SMARTRECRUIT WORKSPACE
+            </p>
+
+            <h1>{{ title }}</h1>
+
+            <p class="welcome-text">
+                {{ subtitle }}
+            </p>
+
+        </section>
+
+        <!-- FLASH MESSAGES -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash-message">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% if error %}
+            <div class="error-box">
+                {{ error }}
+            </div>
+        {% endif %}
+
+
+        <!-- CANDIDATES SECTION -->
+        {% if section == "candidates" %}
+
+        <div class="panel">
+
+            <h3>
+                <i class="fa-solid fa-user-plus"></i>
+                Add New Candidate
+            </h3>
+
+            <form method="POST" class="data-form">
+
+                <input type="text"
+                       name="name"
+                       placeholder="Full name"
+                       required>
+
+                <input type="email"
+                       name="email"
+                       placeholder="Email address">
+
+                <input type="text"
+                       name="role"
+                       placeholder="Target role">
+
+                <input type="text"
+                       name="experience"
+                       placeholder="Experience (e.g. 2 Years)">
+
+                <input type="text"
+                       name="location"
+                       placeholder="Location">
+
+                <select name="status">
+                    <option value="New">New</option>
+                    <option value="Shortlisted">Shortlisted</option>
+                    <option value="Interview">Interview</option>
+                    <option value="Selected">Selected</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+
+                <button type="submit" class="primary-button">
+                    <i class="fa-solid fa-plus"></i>
+                    Add Candidate
+                </button>
+
+            </form>
+
+        </div>
+
+        <div class="panel records-panel">
+
+            <div class="records-top">
+
+                <div>
+                    <h3>Candidates List</h3>
+                    <span class="muted-note">
+                        Saved records in your local SmartRecruit database
+                    </span>
+                </div>
+
+                <span class="record-count">
+                    {{ rows|length }} record(s)
+                </span>
+
+            </div>
+
+            <div class="records-tools">
+
+                <input type="text"
+                       id="candidateSearch"
+                       class="search-input"
+                       placeholder="Search by name, email, role or resume...">
+
+                <select id="statusFilter" class="filter-select">
+                    <option value="">All statuses</option>
+                    <option value="New">New</option>
+                    <option value="Shortlisted">Shortlisted</option>
+                    <option value="Interview">Interview</option>
+                    <option value="Selected">Selected</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+
+            </div>
+
+            <div class="table-wrapper">
+
+                <table class="data-table" id="candidateTable">
+
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Experience</th>
+                            <th>Location</th>
+                            <th>AI Match</th>
+                            <th>Resume</th>
+                            <th>Details</th>
+                            <th>Status</th>
+                            <th>Update Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for row in rows %}
+
+                        <tr data-status="{{ row.status }}">
+
+                            <td class="candidate-name">
+                                {{ row.name }}
+                            </td>
+
+                            <td>
+                                {{ row.email or "—" }}
+                            </td>
+
+                            <td>
+                                {{ row.role or "—" }}
+                            </td>
+
+                            <td>
+                                {{ row.experience or "—" }}
+                            </td>
+
+                            <td>
+                                {{ row.location or "—" }}
+                            </td>
+
+                            <td>
+                                {% if row.match_score is not none %}
+                                    <span class="match-badge">
+                                        {{ "%.1f"|format(row.match_score) }}%
+                                    </span>
+                                {% else %}
+                                    <span class="not-screened">
+                                        Not screened
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if row.resume_stored_name %}
+                                    <a class="resume-link"
+                                       href="{{ url_for('download_candidate_resume', candidate_id=row.id) }}">
+                                        <i class="fa-solid fa-download"></i>
+                                        {{ row.resume_filename }}
+                                    </a>
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+
+                                <a class="profile-link"
+                                   href="{{ url_for('candidate_profile', candidate_id=row.id) }}">
+                                    <i class="fa-solid fa-user"></i>
+                                    Open Profile
+                                </a>
+
+                                {% if row.match_score is not none %}
+
+                                <details class="analysis-details">
+
+                                    <summary>
+                                        <i class="fa-solid fa-caret-right"></i>
+                                        View AI Analysis
+                                    </summary>
+
+                                    <div class="analysis-content">
+
+                                        <strong>Matched Skills</strong>
+                                        <div>
+                                            {% for skill in row.matched_skills_list %}
+                                                <span class="skill-tag matched">
+                                                    {{ skill }}
+                                                </span>
+                                            {% else %}
+                                                <span class="muted-note">
+                                                    No matched skills recorded.
+                                                </span>
+                                            {% endfor %}
+                                        </div>
+
+                                        <br>
+
+                                        <strong>Missing Skills</strong>
+                                        <div>
+                                            {% for skill in row.missing_skills_list %}
+                                                <span class="skill-tag missing">
+                                                    {{ skill }}
+                                                </span>
+                                            {% else %}
+                                                <span class="muted-note">
+                                                    No missing skills recorded.
+                                                </span>
+                                            {% endfor %}
+                                        </div>
+
+                                        <br>
+
+                                        <strong>Score Breakdown</strong>
+
+                                        {% for key, value in row.score_breakdown_dict.items() %}
+                                            <div class="score-line">
+                                                {{ key|replace("_", " ")|title }}:
+                                                {{ value }}
+                                            </div>
+                                        {% else %}
+                                            <p class="muted-note">
+                                                No score breakdown available.
+                                            </p>
+                                        {% endfor %}
+
+                                    </div>
+
+                                </details>
+
+                                {% else %}
+                                    <span class="muted-note">No AI analysis</span>
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                <span class="status-pill">
+                                    {{ row.status }}
+                                </span>
+                            </td>
+
+                            <td>
+
+                                <form method="POST" class="status-form">
+
+                                    <input type="hidden"
+                                           name="action"
+                                           value="update_status">
+
+                                    <input type="hidden"
+                                           name="candidate_id"
+                                           value="{{ row.id }}">
+
+                                    <select name="status">
+
+                                        <option value="New"
+                                            {% if row.status == "New" %}selected{% endif %}>
+                                            New
+                                        </option>
+
+                                        <option value="Shortlisted"
+                                            {% if row.status == "Shortlisted" %}selected{% endif %}>
+                                            Shortlisted
+                                        </option>
+
+                                        <option value="Interview"
+                                            {% if row.status == "Interview" %}selected{% endif %}>
+                                            Interview
+                                        </option>
+
+                                        <option value="Selected"
+                                            {% if row.status == "Selected" %}selected{% endif %}>
+                                            Selected
+                                        </option>
+
+                                        <option value="Rejected"
+                                            {% if row.status == "Rejected" %}selected{% endif %}>
+                                            Rejected
+                                        </option>
+
+                                    </select>
+
+                                    <button type="submit" title="Update status">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+
+                                </form>
+
+                            </td>
+
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+                            <td colspan="10">
+                                No candidates found. Add your first candidate above.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- JOB OPENINGS SECTION -->
+        {% if section == "jobs" %}
+
+        <div class="panel">
+
+            <h3>
+                <i class="fa-solid fa-briefcase"></i>
+                Create Job Opening
+            </h3>
+
+            <form method="POST" class="data-form">
+
+                <input type="text"
+                       name="title"
+                       placeholder="Job title"
+                       required>
+
+                <input type="text"
+                       name="department"
+                       placeholder="Department">
+
+                <input type="text"
+                       name="location"
+                       placeholder="Job location">
+
+                <select name="status">
+                    <option value="Active">Active</option>
+                    <option value="Closed">Closed</option>
+                </select>
+
+                <button type="submit" class="primary-button">
+                    <i class="fa-solid fa-plus"></i>
+                    Create Job
+                </button>
+
+            </form>
+
+        </div>
+
+        <div class="panel records-panel">
+
+            <div class="records-top">
+                <h3>Job Openings</h3>
+                <span class="record-count">
+                    {{ rows|length }} record(s)
+                </span>
+            </div>
+
+            <div class="table-wrapper">
+
+                <table class="data-table">
+
+                    <thead>
+                        <tr>
+                            <th>Job Title</th>
+                            <th>Department</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Created At</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for row in rows %}
+
+                        <tr>
+                            <td>{{ row.title }}</td>
+                            <td>{{ row.department or "—" }}</td>
+                            <td>{{ row.location or "—" }}</td>
+                            <td>
+                                <span class="status-pill">
+                                    {{ row.status }}
+                                </span>
+                            </td>
+                            <td>{{ row.created_at or "—" }}</td>
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+                            <td colspan="5">No job openings found.</td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- RESUME STUDIO SECTION -->
+        {% if section == "resume-studio" %}
+
+        <div class="panel">
+
+            <h3>
+                <i class="fa-solid fa-file-lines"></i>
+                Professional Summary Generator
+            </h3>
+
+            <form method="POST" class="data-form">
+
+                <input type="text"
+                       name="candidate_name"
+                       placeholder="Candidate name"
+                       required>
+
+                <input type="text"
+                       name="target_role"
+                       placeholder="Target role"
+                       required>
+
+                <textarea name="experience"
+                          rows="5"
+                          placeholder="Describe education and experience"></textarea>
+
+                <textarea name="skills"
+                          rows="5"
+                          placeholder="Enter technical and professional skills"></textarea>
+
+                <button type="submit" class="primary-button">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    Generate Summary
+                </button>
+
+            </form>
+
+            {% if generated %}
+
+            <div class="summary-output" id="generatedSummary">{{ generated }}</div>
+
+            <button class="copy-button"
+                    type="button"
+                    onclick="copySummary()">
+                <i class="fa-solid fa-copy"></i>
+                Copy Summary
+            </button>
+
+            {% endif %}
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- DOCUMENTS SECTION -->
+        {% if section == "documents" %}
+
+        <div class="panel">
+
+            <h3>
+                <i class="fa-solid fa-folder-open"></i>
+                Upload Document
+            </h3>
+
+            <form method="POST"
+                  enctype="multipart/form-data"
+                  class="data-form one-column">
+
+                <label class="muted-note">
+                    Select PDF, DOCX, TXT, PNG or JPG file
+                </label>
+
+                <input type="file"
+                       name="document"
+                       accept=".pdf,.docx,.txt,.png,.jpg,.jpeg"
+                       required>
+
+                <button type="submit" class="primary-button">
+                    <i class="fa-solid fa-upload"></i>
+                    Upload Document
+                </button>
+
+            </form>
+
+        </div>
+
+        <div class="panel records-panel">
+
+            <div class="records-top">
+                <h3>Uploaded Documents</h3>
+                <span class="record-count">
+                    {{ rows|length }} record(s)
+                </span>
+            </div>
+
+            <div class="table-wrapper">
+
+                <table class="data-table">
+
+                    <thead>
+                        <tr>
+                            <th>File Name</th>
+                            <th>Uploaded At</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for row in rows %}
+
+                        <tr>
+                            <td>
+                                <i class="fa-solid fa-file"></i>
+                                {{ row.filename }}
+                            </td>
+                            <td>{{ row.uploaded_at }}</td>
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+                            <td colspan="2">No documents uploaded yet.</td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- MESSAGES SECTION -->
+        {% if section == "messages" %}
+
+        <div class="panel">
+
+            <h3>
+                <i class="fa-solid fa-envelope"></i>
+                Create Message Draft
+            </h3>
+
+            <form method="POST" class="data-form one-column">
+
+                <input type="email"
+                       name="recipient"
+                       placeholder="Recipient email"
+                       required>
+
+                <input type="text"
+                       name="subject"
+                       placeholder="Message subject">
+
+                <textarea name="body"
+                          rows="7"
+                          placeholder="Write your message here..."></textarea>
+
+                <button type="submit" class="primary-button">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Save Message
+                </button>
+
+            </form>
+
+        </div>
+
+        <div class="panel records-panel">
+
+            <div class="records-top">
+                <h3>Saved Messages</h3>
+                <span class="record-count">
+                    {{ rows|length }} record(s)
+                </span>
+            </div>
+
+            <div class="table-wrapper">
+
+                <table class="data-table">
+
+                    <thead>
+                        <tr>
+                            <th>Recipient</th>
+                            <th>Subject</th>
+                            <th>Message</th>
+                            <th>Created At</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for row in rows %}
+
+                        <tr>
+                            <td>{{ row.recipient }}</td>
+                            <td>{{ row.subject or "—" }}</td>
+                            <td>{{ row.body or "—" }}</td>
+                            <td>{{ row.created_at }}</td>
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+                            <td colspan="4">No messages saved yet.</td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </main>
+
+</div>
+
+
+<script>
+
+    // CANDIDATE SEARCH AND STATUS FILTER
+    const candidateSearch = document.getElementById("candidateSearch");
+    const statusFilter = document.getElementById("statusFilter");
+
+    function filterCandidates() {
+
+        const searchValue = candidateSearch
+            ? candidateSearch.value.toLowerCase()
+            : "";
+
+        const selectedStatus = statusFilter
+            ? statusFilter.value
+            : "";
+
+        document.querySelectorAll("#candidateTable tbody tr")
+            .forEach(row => {
+
+                const rowText = row.innerText.toLowerCase();
+                const rowStatus = row.dataset.status || "";
+
+                const matchesSearch = rowText.includes(searchValue);
+
+                const matchesStatus =
+                    !selectedStatus || rowStatus === selectedStatus;
+
+                row.style.display =
+                    matchesSearch && matchesStatus ? "" : "none";
+            });
+    }
+
+    if (candidateSearch) {
+        candidateSearch.addEventListener("input", filterCandidates);
+    }
+
+    if (statusFilter) {
+        statusFilter.addEventListener("change", filterCandidates);
+    }
+
+
+    // COPY RESUME STUDIO SUMMARY
+    function copySummary() {
+
+        const summary = document.getElementById("generatedSummary");
+
+        if (!summary) {
+            return;
+        }
+
+        navigator.clipboard.writeText(summary.innerText)
+            .then(() => {
+                alert("Summary copied successfully.");
+            })
+            .catch(() => {
+                alert("Unable to copy summary.");
+            });
+    }
+
+</script>
+
+</body>
+</html>

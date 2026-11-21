@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartRecruit | Recruiter Accounts</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 35px;
+            background: #080d1b;
+            color: white;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #c4b5fd;
+            margin-bottom: 8px;
+        }
+
+        p {
+            color: #94a3b8;
+        }
+
+        .panel {
+            background: #111a2e;
+            border: 1px solid #273452;
+            border-radius: 14px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #35425e;
+            background: #0b1325;
+            color: white;
+        }
+
+        button, .back {
+            padding: 11px 16px;
+            border: none;
+            border-radius: 7px;
+            background: #7c3aed;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        button:hover, .back:hover {
+            background: #6d28d9;
+        }
+
+        .create-btn {
+            margin-top: 20px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 15px;
+            border-bottom: 1px solid #273452;
+        }
+
+        th {
+            color: #a78bfa;
+        }
+
+        .active {
+            color: #4ade80;
+        }
+
+        .inactive {
+            color: #fb7185;
+        }
+
+        .error {
+            color: #fda4af;
+            margin-bottom: 15px;
+        }
+
+        .small-btn {
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        @media(max-width: 650px) {
+            body {
+                padding: 18px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="topbar">
+        <div>
+            <h1>Recruiter Accounts</h1>
+            <p>Create and manage SmartRecruit recruiter access.</p>
+        </div>
+
+        <a href="{{ url_for('dashboard') }}" class="back">
+            Back to Dashboard
+        </a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endwith %}
+
+    <div class="panel">
+
+        <h2>Create Recruiter Account</h2>
+        <br>
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST">
+
+            <input type="hidden" name="action" value="create">
+
+            <div class="form-grid">
+
+                <div>
+                    <label>Full Name</label>
+                    <input type="text" name="name" required>
+                </div>
+
+                <div>
+                    <label>Username</label>
+                    <input type="text" name="username" required>
+                </div>
+
+                <div>
+                    <label>Email</label>
+                    <input type="email" name="email">
+                </div>
+
+                <div>
+                    <label>Temporary Password</label>
+                    <input
+                        type="password"
+                        name="password"
+                        minlength="8"
+                        required
+                    >
+                </div>
+
+            </div>
+
+            <button class="create-btn" type="submit">
+                Create Recruiter
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="panel">
+
+        <h2>Existing Accounts</h2>
+        <br>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for recruiter in recruiters %}
+
+                    <tr>
+
+                        <td>{{ recruiter['name'] }}</td>
+                        <td>{{ recruiter['username'] }}</td>
+                        <td>{{ recruiter['email'] or '—' }}</td>
+                        <td>{{ recruiter['role']|title }}</td>
+
+                        <td>
+                            {% if recruiter['is_active'] %}
+                                <span class="active">Active</span>
+                            {% else %}
+                                <span class="inactive">Inactive</span>
+                            {% endif %}
+                        </td>
+
+                        <td>{{ recruiter['created_at'] }}</td>
+
+                        <td>
+                            {% if recruiter['role'] == 'recruiter' %}
+                            <form method="POST">
+                                <input
+                                    type="hidden"
+                                    name="action"
+                                    value="toggle"
+                                >
+                                <input
+                                    type="hidden"
+                                    name="recruiter_id"
+                                    value="{{ recruiter['id'] }}"
+                                >
+
+                                <button class="small-btn" type="submit">
+                                    {% if recruiter['is_active'] %}
+                                        Deactivate
+                                    {% else %}
+                                        Activate
+                                    {% endif %}
+                                </button>
+                            </form>
+                            {% else %}
+                                Admin
+                            {% endif %}
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="7">No accounts found.</td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

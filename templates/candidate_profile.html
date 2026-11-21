@@ -1,0 +1,670 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SmartRecruit | Candidate Profile</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+
+        body {
+            background: #0b0d18;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .main-content {
+            min-width: 0;
+        }
+
+        .profile-intro {
+            margin-bottom: 25px;
+        }
+
+        .eyebrow {
+            color: #a78bfa;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .profile-hero {
+            background: #171a2d;
+            border: 1px solid #293456;
+            border-radius: 17px;
+            padding: 24px;
+            margin-bottom: 22px;
+        }
+
+        .hero-top {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .candidate-avatar-large {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+        .hero-info h1 {
+            color: #f8fafc;
+            margin: 0 0 7px;
+            font-size: 25px;
+        }
+
+        .hero-info p {
+            color: #a5b4d4;
+            margin: 0;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .outline-button {
+            display: inline-block;
+            text-decoration: none;
+            background: transparent;
+            color: #c4b5fd;
+            border: 1px solid #39476c;
+            border-radius: 9px;
+            padding: 10px 14px;
+            font-size: 13px;
+        }
+
+        .outline-button:hover {
+            border-color: #8b5cf6;
+        }
+
+        .profile-date {
+            color: #93a4c7;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .profile-panel {
+            background: #171a2d;
+            border: 1px solid #293456;
+            border-radius: 16px;
+            padding: 23px;
+            margin-bottom: 20px;
+        }
+
+        .profile-panel h3 {
+            color: #f1f5f9;
+            font-size: 17px;
+            margin: 0 0 22px;
+        }
+
+        .information-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .info-item label {
+            display: block;
+            color: #93a4c7;
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        .info-item strong {
+            color: #f1f5f9;
+            font-size: 15px;
+            overflow-wrap: anywhere;
+        }
+
+        .match-number {
+            color: #4ade80;
+            font-size: 48px;
+            font-weight: 800;
+            margin: 8px 0;
+        }
+
+        .match-description {
+            color: #93a4c7;
+            font-size: 13px;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 11px;
+            background: #293456;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #22c55e, #86efac);
+            border-radius: 20px;
+        }
+
+        .skill-tag {
+            display: inline-block;
+            padding: 7px 11px;
+            margin: 4px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .matched {
+            color: #4ade80;
+            background: rgba(34, 197, 94, 0.12);
+        }
+
+        .missing {
+            color: #f87171;
+            background: rgba(239, 68, 68, 0.12);
+        }
+
+        .skill-empty {
+            color: #8992ac;
+            font-size: 13px;
+        }
+
+        .breakdown-item {
+            margin-bottom: 18px;
+        }
+
+        .breakdown-heading {
+            display: flex;
+            justify-content: space-between;
+            color: #cbd5e1;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .breakdown-track {
+            height: 8px;
+            background: #293456;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .breakdown-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7c3aed, #22d3ee);
+            border-radius: 20px;
+        }
+
+        .status-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .status-form select {
+            background: #10162b;
+            color: #f1f5f9;
+            border: 1px solid #39476c;
+            border-radius: 9px;
+            padding: 11px 14px;
+            min-width: 180px;
+        }
+
+        .primary-button {
+            background: linear-gradient(135deg, #7c3aed, #6366f1);
+            color: white;
+            border: none;
+            padding: 11px 17px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .flash-message {
+            background: rgba(34, 197, 94, 0.12);
+            color: #6ee7b7;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 17px;
+        }
+
+        .notice {
+            color: #93a4c7;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        @media(max-width: 900px) {
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width: 600px) {
+            .information-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .match-number {
+                font-size: 38px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <a class="brand" href="/">
+            <div class="brand-icon">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <span>Smart<span class="brand-highlight">Recruit</span></span>
+        </a>
+
+        <p class="section-label">WORKSPACE</p>
+
+        <nav class="navigation">
+
+            <a href="/" class="nav-link">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/candidates" class="nav-link active">
+                <i class="fa-solid fa-users"></i>
+                <span>Candidates</span>
+            </a>
+
+            <a href="/pipeline" class="nav-link">
+                <i class="fa-solid fa-diagram-project"></i>
+                <span>Recruitment Pipeline</span>
+            </a>
+
+            <a href="/jobs" class="nav-link">
+                <i class="fa-solid fa-briefcase"></i>
+                <span>Job Openings</span>
+            </a>
+
+            <a href="/resume-screening" class="nav-link">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>AI Resume Screening</span>
+                <span class="ai-tag">AI</span>
+            </a>
+
+            <a href="/resume-studio" class="nav-link">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>Resume Studio</span>
+            </a>
+
+            <a href="/documents" class="nav-link">
+                <i class="fa-solid fa-folder-open"></i>
+                <span>Documents</span>
+            </a>
+
+            <a href="/messages" class="nav-link">
+                <i class="fa-solid fa-comments"></i>
+                <span>Messages</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <p class="breadcrumb">
+                    Workspace / Candidates / Candidate Profile
+                </p>
+                <h2>Candidate Profile</h2>
+            </div>
+
+            <span class="top-avatar">EK</span>
+        </header>
+
+
+        <section class="profile-intro">
+
+            <p class="eyebrow">SMARTRECRUIT WORKSPACE</p>
+
+            <h1>Candidate Profile</h1>
+
+            <p class="welcome-text">
+                Review candidate information and AI screening results.
+            </p>
+
+        </section>
+
+
+        <!-- FLASH MESSAGES -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash-message">
+                        <i class="fa-solid fa-circle-check"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+
+        <!-- PROFILE HEADER -->
+        <section class="profile-hero">
+
+            <div class="hero-top">
+
+                <div class="candidate-avatar-large">
+                    {{ candidate.name[:1]|upper }}
+                </div>
+
+                <div class="hero-info">
+                    <h1>{{ candidate.name }}</h1>
+                    <p>{{ candidate.role or "Role not specified" }}</p>
+                </div>
+
+            </div>
+
+            <div class="hero-actions">
+
+                <a href="/candidates" class="outline-button">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Back to Candidates
+                </a>
+
+                {% if candidate.resume_stored_name %}
+                    <a href="{{ url_for('download_candidate_resume', candidate_id=candidate.id) }}"
+                       class="outline-button">
+                        <i class="fa-solid fa-download"></i>
+                        Download Resume
+                    </a>
+                {% endif %}
+
+            </div>
+
+            <p class="profile-date">
+                Candidate added: {{ candidate.created_at or "Date unavailable" }}
+            </p>
+
+        </section>
+
+
+        <!-- PERSONAL INFO AND AI MATCH -->
+        <section class="profile-grid">
+
+            <div class="profile-panel">
+
+                <h3>
+                    <i class="fa-solid fa-address-card"></i>
+                    Personal Information
+                </h3>
+
+                <div class="information-grid">
+
+                    <div class="info-item">
+                        <label>Full Name</label>
+                        <strong>{{ candidate.name }}</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Email</label>
+                        <strong>{{ candidate.email or "Not provided" }}</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Target Role</label>
+                        <strong>{{ candidate.role or "Not provided" }}</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Experience</label>
+                        <strong>{{ candidate.experience or "Not provided" }}</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Location</label>
+                        <strong>{{ candidate.location or "Not provided" }}</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Resume File</label>
+                        <strong>{{ candidate.resume_filename or "Not uploaded" }}</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- AI MATCH -->
+            <div class="profile-panel">
+
+                <h3>
+                    <i class="fa-solid fa-chart-line"></i>
+                    AI Resume Match
+                </h3>
+
+                {% if candidate.match_score is not none %}
+
+                    <div class="match-number">
+                        {{ "%.1f"|format(candidate.match_score) }}%
+                    </div>
+
+                    <p class="match-description">
+                        Resume and job description similarity score
+                    </p>
+
+                    <div class="progress-track">
+                        <div class="progress-fill"
+                             style="width: {{ [candidate.match_score|float, 100]|min }}%;">
+                        </div>
+                    </div>
+
+                    <p class="notice">
+                        This score is an AI screening aid, not a hiring decision.
+                    </p>
+
+                {% else %}
+
+                    <p class="skill-empty">
+                        This candidate has not been screened using AI yet.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+        <!-- SKILLS -->
+        <section class="profile-grid">
+
+            <div class="profile-panel">
+
+                <h3>
+                    <i class="fa-solid fa-circle-check"
+                       style="color:#4ade80;"></i>
+                    Matched Skills
+                </h3>
+
+                {% for skill in candidate.matched_skills_list %}
+
+                    <span class="skill-tag matched">
+                        {{ skill }}
+                    </span>
+
+                {% else %}
+
+                    <p class="skill-empty">
+                        No matched skills available.
+                    </p>
+
+                {% endfor %}
+
+            </div>
+
+
+            <div class="profile-panel">
+
+                <h3>
+                    <i class="fa-solid fa-circle-exclamation"
+                       style="color:#f87171;"></i>
+                    Missing Skills
+                </h3>
+
+                {% for skill in candidate.missing_skills_list %}
+
+                    <span class="skill-tag missing">
+                        {{ skill }}
+                    </span>
+
+                {% else %}
+
+                    <p class="skill-empty">
+                        No missing skills available.
+                    </p>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+        <!-- SCORE BREAKDOWN -->
+        {% if candidate.score_breakdown_dict %}
+
+        <section class="profile-panel">
+
+            <h3>
+                <i class="fa-solid fa-chart-column"></i>
+                AI Score Breakdown
+            </h3>
+
+            {% for key, value in candidate.score_breakdown_dict.items() %}
+
+                <div class="breakdown-item">
+
+                    <div class="breakdown-heading">
+                        <span>{{ key|replace("_", " ")|title }}</span>
+                        <strong>{{ value }}%</strong>
+                    </div>
+
+                    <div class="breakdown-track">
+
+                        <div class="breakdown-fill"
+                             style="width: {{ [value|float, 100]|min }}%;">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </section>
+
+        {% endif %}
+
+
+        <!-- RECRUITMENT STATUS -->
+        <section class="profile-panel">
+
+            <h3>
+                <i class="fa-solid fa-list-check"></i>
+                Recruitment Status
+            </h3>
+
+            <p class="notice">
+                Current status:
+                <strong>{{ candidate.status }}</strong>
+            </p>
+
+            <form method="POST" class="status-form">
+
+                <select name="status" required>
+
+                    <option value="New"
+                        {% if candidate.status == "New" %}selected{% endif %}>
+                        New
+                    </option>
+
+                    <option value="Shortlisted"
+                        {% if candidate.status == "Shortlisted" %}selected{% endif %}>
+                        Shortlisted
+                    </option>
+
+                    <option value="Interview"
+                        {% if candidate.status == "Interview" %}selected{% endif %}>
+                        Interview
+                    </option>
+
+                    <option value="Selected"
+                        {% if candidate.status == "Selected" %}selected{% endif %}>
+                        Selected
+                    </option>
+
+                    <option value="Rejected"
+                        {% if candidate.status == "Rejected" %}selected{% endif %}>
+                        Rejected
+                    </option>
+
+                </select>
+
+                <button type="submit" class="primary-button">
+                    <i class="fa-solid fa-check"></i>
+                    Update Status
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <footer class="footer">
+            <span>© 2026 SmartRecruit. Built for smarter hiring.</span>
+            <span>AI-assisted recruitment workspace</span>
+        </footer>
+
+    </main>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,575 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartRecruit | Recruitment Pipeline</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body {
+            background: #0b0d18;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .main-content {
+            min-width: 0;
+        }
+
+        .pipeline-intro {
+            margin-bottom: 25px;
+        }
+
+        .pipeline-label {
+            color: #a78bfa;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .pipeline-intro h1 {
+            color: #f8fafc;
+            margin: 10px 0;
+        }
+
+        .pipeline-intro p {
+            color: #9ca3af;
+        }
+
+        .pipeline-summary {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(130px, 1fr));
+            gap: 14px;
+            margin: 24px 0;
+        }
+
+        .summary-card {
+            background: #171a2d;
+            border: 1px solid #293456;
+            padding: 17px;
+            border-radius: 13px;
+        }
+
+        .summary-card span {
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        .summary-card h2 {
+            color: #f8fafc;
+            font-size: 25px;
+            margin: 9px 0 0;
+        }
+
+        .pipeline-board {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(230px, 1fr));
+            gap: 16px;
+            align-items: start;
+            overflow-x: auto;
+            padding-bottom: 20px;
+        }
+
+        .pipeline-column {
+            background: #111426;
+            border: 1px solid #293456;
+            border-radius: 15px;
+            min-height: 420px;
+            padding: 14px;
+        }
+
+        .column-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .column-header h3 {
+            color: #e5e7eb;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .column-count {
+            background: #252b46;
+            color: #c4b5fd;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .candidate-card {
+            background: #1a1e33;
+            border: 1px solid #303958;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            cursor: grab;
+            transition: 0.2s;
+        }
+
+        .candidate-card:hover {
+            border-color: #8b5cf6;
+            transform: translateY(-2px);
+        }
+
+        .candidate-card.dragging {
+            opacity: 0.45;
+        }
+
+        .pipeline-column.drag-over {
+            border: 1px dashed #a78bfa;
+            background: #191a35;
+        }
+
+        .candidate-name {
+            color: #f8fafc;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        .candidate-role {
+            color: #a5b4d4;
+            font-size: 12px;
+            margin-bottom: 13px;
+        }
+
+        .candidate-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .match-score {
+            color: #34d399;
+            background: rgba(16, 185, 129, 0.13);
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .not-screened {
+            color: #9ca3af;
+            background: #292d3d;
+        }
+
+        .candidate-date {
+            color: #8d96b0;
+            font-size: 10px;
+        }
+
+        .profile-link {
+            color: #93c5fd;
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        .profile-link:hover {
+            color: #c4b5fd;
+        }
+
+        .empty-column {
+            color: #737b95;
+            text-align: center;
+            font-size: 12px;
+            padding: 35px 8px;
+            border: 1px dashed #303958;
+            border-radius: 10px;
+        }
+
+        .pipeline-message {
+            display: none;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 13px;
+        }
+
+        .pipeline-message.success {
+            display: block;
+            color: #6ee7b7;
+            background: rgba(16, 185, 129, 0.12);
+        }
+
+        .pipeline-message.error {
+            display: block;
+            color: #fca5a5;
+            background: rgba(239, 68, 68, 0.12);
+        }
+
+        @media(max-width: 1000px) {
+            .pipeline-summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .pipeline-board {
+                grid-template-columns: repeat(5, 250px);
+            }
+        }
+
+        @media(max-width: 600px) {
+            .pipeline-summary {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <a class="brand" href="/">
+            <div class="brand-icon">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <span>Smart<span class="brand-highlight">Recruit</span></span>
+        </a>
+
+        <p class="section-label">WORKSPACE</p>
+
+        <nav class="navigation">
+
+            <a href="/" class="nav-link">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/candidates" class="nav-link">
+                <i class="fa-solid fa-users"></i>
+                <span>Candidates</span>
+            </a>
+
+            <a href="/pipeline" class="nav-link active">
+                <i class="fa-solid fa-diagram-project"></i>
+                <span>Recruitment Pipeline</span>
+            </a>
+
+            <a href="/jobs" class="nav-link">
+                <i class="fa-solid fa-briefcase"></i>
+                <span>Job Openings</span>
+            </a>
+
+            <a href="/resume-screening" class="nav-link">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>AI Resume Screening</span>
+            </a>
+
+            <a href="/resume-studio" class="nav-link">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>Resume Studio</span>
+            </a>
+
+            <a href="/documents" class="nav-link">
+                <i class="fa-solid fa-folder-open"></i>
+                <span>Documents</span>
+            </a>
+
+            <a href="/messages" class="nav-link">
+                <i class="fa-solid fa-comments"></i>
+                <span>Messages</span>
+            </a>
+
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <p class="breadcrumb">Workspace / Recruitment Pipeline</p>
+                <h2>Recruitment Pipeline</h2>
+            </div>
+
+            <span class="top-avatar">EK</span>
+        </header>
+
+        <section class="pipeline-intro">
+
+            <p class="pipeline-label">SMARTRECRUIT WORKSPACE</p>
+
+            <h1>Manage Your Hiring Process</h1>
+
+            <p>
+                Drag and drop candidates between stages to update
+                their recruitment progress.
+            </p>
+
+        </section>
+
+        <div id="pipelineMessage" class="pipeline-message"></div>
+
+        <!-- SUMMARY -->
+        <section class="pipeline-summary">
+
+            {% for status in pipeline_statuses %}
+            <div class="summary-card">
+                <span>{{ status }}</span>
+                <h2>{{ pipeline[status]|length }}</h2>
+            </div>
+            {% endfor %}
+
+        </section>
+
+        <!-- PIPELINE BOARD -->
+        <section class="pipeline-board">
+
+            {% for status in pipeline_statuses %}
+
+            <div class="pipeline-column"
+                 data-status="{{ status }}"
+                 ondragover="allowDrop(event)"
+                 ondragleave="leaveColumn(event)"
+                 ondrop="dropCandidate(event)">
+
+                <div class="column-header">
+                    <h3>{{ status }}</h3>
+
+                    <span class="column-count">
+                        {{ pipeline[status]|length }}
+                    </span>
+                </div>
+
+                <div class="candidate-list">
+
+                    {% if pipeline[status] %}
+
+                        {% for candidate in pipeline[status] %}
+
+                        <div class="candidate-card"
+                             draggable="true"
+                             data-id="{{ candidate.id }}"
+                             ondragstart="dragCandidate(event)"
+                             ondragend="dragEnd(event)">
+
+                            <div class="candidate-name">
+                                {{ candidate.name }}
+                            </div>
+
+                            <div class="candidate-role">
+                                {{ candidate.role or "Role not specified" }}
+                            </div>
+
+                            <div class="candidate-meta">
+
+                                {% if candidate.match_score is not none %}
+                                    <span class="match-score">
+                                        {{ "%.1f"|format(candidate.match_score) }}% Match
+                                    </span>
+                                {% else %}
+                                    <span class="match-score not-screened">
+                                        Not screened
+                                    </span>
+                                {% endif %}
+
+                                <span class="candidate-date">
+                                    {{ candidate.created_at or "" }}
+                                </span>
+
+                            </div>
+
+                            <a class="profile-link"
+                               href="{{ url_for('candidate_profile', candidate_id=candidate.id) }}">
+                                <i class="fa-solid fa-user"></i>
+                                Open Profile
+                            </a>
+
+                        </div>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <div class="empty-column">
+                            <i class="fa-solid fa-inbox"></i>
+                            <p>No candidates here yet</p>
+                            <small>Drop candidates into this stage</small>
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </section>
+
+    </main>
+
+</div>
+
+<script>
+
+    let draggedCandidate = null;
+
+    function dragCandidate(event) {
+
+        draggedCandidate = event.currentTarget;
+
+        event.dataTransfer.setData(
+            "text/plain",
+            draggedCandidate.dataset.id
+        );
+
+        event.dataTransfer.effectAllowed = "move";
+
+        setTimeout(() => {
+            draggedCandidate.classList.add("dragging");
+        }, 0);
+    }
+
+    function dragEnd(event) {
+
+        event.currentTarget.classList.remove("dragging");
+
+        document.querySelectorAll(".pipeline-column")
+            .forEach(column => {
+                column.classList.remove("drag-over");
+            });
+    }
+
+    function allowDrop(event) {
+
+        event.preventDefault();
+
+        const column = event.currentTarget;
+
+        column.classList.add("drag-over");
+    }
+
+    function leaveColumn(event) {
+
+        event.currentTarget.classList.remove("drag-over");
+    }
+
+    async function dropCandidate(event) {
+
+        event.preventDefault();
+
+        const column = event.currentTarget;
+
+        column.classList.remove("drag-over");
+
+        if (!draggedCandidate) {
+            return;
+        }
+
+        const candidateId = draggedCandidate.dataset.id;
+        const newStatus = column.dataset.status;
+
+        const oldColumn = draggedCandidate.closest(".pipeline-column");
+
+        if (oldColumn.dataset.status === newStatus) {
+            return;
+        }
+
+        const message = document.getElementById("pipelineMessage");
+
+        try {
+
+            const response = await fetch("/pipeline/update-status", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    candidate_id: candidateId,
+                    status: newStatus
+                })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                throw new Error(
+                    result.message || "Unable to update candidate."
+                );
+            }
+
+            // Move card to the new column
+            const candidateList = column.querySelector(".candidate-list");
+
+            const emptyMessage = candidateList.querySelector(".empty-column");
+
+            if (emptyMessage) {
+                emptyMessage.remove();
+            }
+
+            candidateList.appendChild(draggedCandidate);
+
+            // Remove empty message from old column if needed
+            const oldList = oldColumn.querySelector(".candidate-list");
+
+            if (oldList.querySelectorAll(".candidate-card").length === 0) {
+                oldList.innerHTML = `
+                    <div class="empty-column">
+                        <i class="fa-solid fa-inbox"></i>
+                        <p>No candidates here yet</p>
+                        <small>Drop candidates into this stage</small>
+                    </div>
+                `;
+            }
+
+            // Update column counts
+            updateColumnCounts();
+
+            message.className = "pipeline-message success";
+            message.textContent = result.message;
+
+        } catch (error) {
+
+            message.className = "pipeline-message error";
+            message.textContent = error.message;
+
+        }
+
+        draggedCandidate = null;
+    }
+
+    function updateColumnCounts() {
+
+        document.querySelectorAll(".pipeline-column").forEach(column => {
+
+            const count = column.querySelectorAll(
+                ".candidate-card"
+            ).length;
+
+            column.querySelector(".column-count").textContent = count;
+
+            const status = column.dataset.status;
+
+            document.querySelectorAll(".summary-card").forEach(card => {
+
+                if (card.querySelector("span").textContent === status) {
+                    card.querySelector("h2").textContent = count;
+                }
+
+            });
+
+        });
+    }
+
+</script>
+
+</body>
+</html>

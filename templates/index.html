@@ -1,0 +1,514 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartRecruit | Dashboard</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .logout-form {
+            margin: 0;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: none;
+            color: #a1a1aa;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .logout-btn:hover {
+            color: #fb7185;
+            background: rgba(251, 113, 133, 0.1);
+        }
+
+        .top-avatar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <a class="brand" href="/">
+            <div class="brand-icon">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <span>Smart<span class="brand-highlight">Recruit</span></span>
+        </a>
+
+        <p class="section-label">WORKSPACE</p>
+
+        <nav class="navigation">
+
+            <a href="/" class="nav-link active">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/candidates" class="nav-link">
+                <i class="fa-solid fa-users"></i>
+                <span>Candidates</span>
+            </a>
+
+            <a href="/pipeline" class="nav-link">
+                <i class="fa-solid fa-diagram-project"></i>
+                <span>Recruitment Pipeline</span>
+            </a>
+
+            <a href="/jobs" class="nav-link">
+                <i class="fa-solid fa-briefcase"></i>
+                <span>Job Openings</span>
+            </a>
+
+            <a href="/resume-screening" class="nav-link">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>AI Resume Screening</span>
+                <span class="ai-tag">AI</span>
+            </a>
+
+            <a href="/resume-studio" class="nav-link">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>Resume Studio</span>
+            </a>
+
+            <a href="/documents" class="nav-link">
+                <i class="fa-solid fa-folder-open"></i>
+                <span>Documents</span>
+            </a>
+
+            <a href="/messages" class="nav-link">
+                <i class="fa-solid fa-comments"></i>
+                <span>Messages</span>
+            </a>
+
+            <!-- ADMIN ONLY -->
+            {% if current_recruiter and current_recruiter.role == 'admin' %}
+            <a href="{{ url_for('admin_recruiters') }}" class="nav-link">
+                <i class="fa-solid fa-user-shield"></i>
+                <span>Recruiter Management</span>
+            </a>
+            {% endif %}
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <p class="section-label">PREFERENCES</p>
+
+            <div class="upgrade-card">
+                <div class="upgrade-icon">
+                    <i class="fa-solid fa-sparkles"></i>
+                </div>
+
+                <h4>Recruit smarter</h4>
+
+                <p>Make your hiring workflow more efficient.</p>
+
+                <a href="/resume-screening" class="ai-button">
+                    Explore AI features
+                </a>
+            </div>
+
+            <!-- DYNAMIC RECRUITER PROFILE -->
+            <div class="profile">
+
+                <div class="profile-avatar">
+                    {{ current_recruiter.name[:1]|upper }}
+                </div>
+
+                <div class="profile-info">
+                    <strong>
+                        {{ current_recruiter.name }}
+                    </strong>
+
+                    <small>
+                        {{ current_recruiter.role|title }}
+                    </small>
+                </div>
+
+                <form method="POST" action="{{ url_for('logout') }}"
+                      class="logout-form">
+
+                    <button type="submit"
+                            class="logout-btn"
+                            title="Logout">
+
+                        <i class="fa-solid fa-right-from-bracket"></i>
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN DASHBOARD -->
+    <main class="main-content">
+
+        <!-- TOP HEADER -->
+        <header class="topbar">
+
+            <div>
+                <p class="breadcrumb">Workspace / Dashboard</p>
+                <h2>Dashboard</h2>
+            </div>
+
+            <div class="topbar-right">
+
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search anything...">
+                </div>
+
+                <div class="top-avatar">
+                    {{ current_recruiter.name[:1]|upper }}
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- WELCOME -->
+        <section class="welcome-section">
+
+            <div>
+                <p class="eyebrow">RECRUITMENT OVERVIEW</p>
+
+                <h1>
+                    Welcome to SmartRecruit <span>✦</span>
+                </h1>
+
+                <p class="welcome-text">
+                    Here's what's happening with your recruitment pipeline today.
+                </p>
+            </div>
+
+            <a href="/jobs" class="primary-button">
+                <i class="fa-solid fa-plus"></i>
+                Create new job
+            </a>
+
+        </section>
+
+
+        <!-- STATISTICS -->
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon purple">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                </div>
+
+                <p>Total Candidates</p>
+                <h2>{{ stats.total_candidates }}</h2>
+                <small>Across all recruitment pipelines</small>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon blue">
+                        <i class="fa-solid fa-briefcase"></i>
+                    </div>
+                </div>
+
+                <p>Active Jobs</p>
+                <h2>{{ stats.active_jobs }}</h2>
+                <small>Currently accepting applications</small>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon green">
+                        <i class="fa-solid fa-user-check"></i>
+                    </div>
+                </div>
+
+                <p>Shortlisted</p>
+                <h2>{{ stats.shortlisted }}</h2>
+                <small>Ready for the next hiring stage</small>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon orange">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                </div>
+
+                <p>Interviews</p>
+                <h2>{{ stats.interviews }}</h2>
+                <small>Currently in interview stage</small>
+            </div>
+
+        </section>
+
+
+        <!-- AI BANNER -->
+        <section class="ai-banner">
+
+            <div class="ai-content">
+
+                <div class="ai-label">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    SMART AI SCREENING
+                </div>
+
+                <h2>Find the right talent, faster.</h2>
+
+                <p>
+                    Upload resumes, compare candidate skills
+                    and discover profiles that match your job requirements.
+                </p>
+
+                <a href="/resume-screening" class="ai-button">
+                    Start AI Screening
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </div>
+
+
+            <div class="ai-visual">
+
+                <div class="ai-ring ring-one"></div>
+                <div class="ai-ring ring-two"></div>
+
+                <div class="ai-center">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+
+                <div class="floating-card floating-one">
+                    <i class="fa-solid fa-circle-check"></i>
+                    AI Match Analysis
+                </div>
+
+                <div class="floating-card floating-two">
+                    <i class="fa-solid fa-user"></i>
+                    Candidate found
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- LOWER PANELS -->
+        <section class="content-grid">
+
+            <!-- RECENT CANDIDATES -->
+            <div class="panel candidates-panel">
+
+                <div class="panel-heading">
+
+                    <div>
+                        <h3>Recent Candidates</h3>
+                        <p>Recently added candidate profiles</p>
+                    </div>
+
+                    <a href="/candidates">
+                        View all <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Candidate</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>AI Match</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                        {% for candidate in candidates %}
+
+                            <tr>
+
+                                <td>
+                                    <div class="candidate-info">
+
+                                        <div class="candidate-avatar">
+                                            {{ candidate.name[:1]|upper }}
+                                        </div>
+
+                                        <div>
+                                            <strong>{{ candidate.name }}</strong>
+
+                                            <small>
+                                                {{ candidate.email or "No email provided" }}
+                                            </small>
+                                        </div>
+
+                                    </div>
+                                </td>
+
+                                <td>{{ candidate.role or "—" }}</td>
+
+                                <td>
+                                    <span class="job-status status-active">
+                                        {{ candidate.status }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    {% if candidate.match_score is not none %}
+
+                                        <span class="match-score">
+                                            {{ "%.1f"|format(candidate.match_score) }}%
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="muted-note">
+                                            Not screened
+                                        </span>
+
+                                    {% endif %}
+                                </td>
+
+                            </tr>
+
+                        {% else %}
+
+                            <tr>
+                                <td colspan="4">
+                                    No candidates added yet.
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <!-- RECENT JOB OPENINGS -->
+            <div class="panel jobs-panel">
+
+                <div class="panel-heading">
+
+                    <div>
+                        <h3>Recent Job Openings</h3>
+                        <p>Your active recruitment needs</p>
+                    </div>
+
+                    <a href="/jobs">View all</a>
+
+                </div>
+
+
+                <div class="job-list">
+
+                    {% for job in jobs %}
+
+                    <div class="job-item">
+
+                        <div class="job-icon">
+                            <i class="fa-solid fa-briefcase"></i>
+                        </div>
+
+                        <div class="job-details">
+
+                            <strong>{{ job.title }}</strong>
+                            <small>{{ job.department or "General" }}</small>
+                            <span>{{ job.candidates }} candidates</span>
+
+                        </div>
+
+                        <span class="job-status
+                            {% if job.status == 'Active' %}
+                                status-active
+                            {% else %}
+                                status-review
+                            {% endif %}">
+
+                            {{ job.status }}
+
+                        </span>
+
+                    </div>
+
+                    {% else %}
+
+                        <p class="muted-note">
+                            No job openings created yet.
+                        </p>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- FOOTER -->
+        <footer class="footer">
+
+            <span>
+                © 2026 SmartRecruit. Built for smarter hiring.
+            </span>
+
+            <span>
+                AI-assisted recruitment workspace
+            </span>
+
+        </footer>
+
+    </main>
+
+</div>
+</body>
+</html>
+```

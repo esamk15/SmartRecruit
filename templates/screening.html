@@ -1,0 +1,719 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SmartRecruit | AI Resume Screening</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body {
+            background: #0b0d18;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .main-content {
+            min-width: 0;
+        }
+
+        .page-intro {
+            margin-bottom: 24px;
+        }
+
+        .analytics-heading {
+            color: #a78bfa;
+            letter-spacing: 2px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .panel {
+            background: #171a2d;
+            border: 1px solid #293456;
+            border-radius: 16px;
+            padding: 23px;
+            margin-bottom: 22px;
+        }
+
+        .panel h3 {
+            color: #f1f5ff;
+            font-size: 16px;
+            margin: 0 0 17px;
+        }
+
+        .panel-description {
+            color: #a5b4d4;
+            font-size: 13px;
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            display: block;
+            color: #9ca3c7;
+            font-size: 12px;
+            margin-bottom: 9px;
+        }
+
+        .form-control {
+            width: 100%;
+            box-sizing: border-box;
+            background: #0e1221;
+            color: #f1f5f9;
+            border: 1px solid #303b5c;
+            border-radius: 10px;
+            padding: 13px;
+            font: inherit;
+            margin-bottom: 20px;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: #8b5cf6;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 125px;
+        }
+
+        input[type="file"].form-control {
+            padding: 12px;
+        }
+
+        .primary-button {
+            background: linear-gradient(135deg, #7c3aed, #6366f1);
+            color: white;
+            border: none;
+            padding: 13px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .primary-button:hover {
+            opacity: 0.9;
+        }
+
+        .secondary-button {
+            background: #252c49;
+            color: #c4b5fd;
+            border: 1px solid #3b466a;
+            padding: 10px 14px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .danger-button {
+            background: rgba(239, 68, 68, 0.12);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .divider {
+            height: 1px;
+            background: #293456;
+            margin: 23px 0;
+        }
+
+        .resume-list {
+            display: grid;
+            gap: 11px;
+        }
+
+        .resume-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 14px;
+            border-radius: 11px;
+            border: 1px solid #303958;
+            background: #11162a;
+        }
+
+        .resume-name {
+            color: #e5e7eb;
+            font-size: 13px;
+            font-weight: 600;
+            overflow-wrap: anywhere;
+        }
+
+        .resume-date {
+            color: #8d96b0;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        .resume-count {
+            color: #a5b4fc;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .flash-message {
+            background: rgba(34, 197, 94, 0.12);
+            color: #6ee7b7;
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.12);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .result-card {
+            background: #11162a;
+            border: 1px solid #303958;
+            border-radius: 13px;
+            padding: 18px;
+            margin-bottom: 13px;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .result-header h4 {
+            color: #f1f5f9;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .result-score {
+            color: #34d399;
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .skill-section {
+            margin-top: 15px;
+        }
+
+        .skill-section strong {
+            display: block;
+            color: #cbd5e1;
+            font-size: 12px;
+            margin-bottom: 9px;
+        }
+
+        .skill-tag {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            margin: 3px;
+            font-size: 11px;
+        }
+
+        .matched {
+            color: #4ade80;
+            background: rgba(34, 197, 94, 0.12);
+        }
+
+        .missing {
+            color: #f87171;
+            background: rgba(239, 68, 68, 0.12);
+        }
+
+        .score-breakdown {
+            margin-top: 15px;
+            color: #a5b4fc;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #858da7;
+            padding: 25px;
+            border: 1px dashed #303958;
+            border-radius: 11px;
+            font-size: 13px;
+        }
+
+        .footer-note {
+            color: #8d96b0;
+            font-size: 11px;
+            margin-top: 18px;
+        }
+
+        @media(max-width: 650px) {
+            .panel {
+                padding: 16px;
+            }
+
+            .resume-item {
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <a class="brand" href="/">
+            <div class="brand-icon">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+
+            <span>Smart<span class="brand-highlight">Recruit</span></span>
+        </a>
+
+        <p class="section-label">WORKSPACE</p>
+
+        <nav class="navigation">
+
+            <a href="/" class="nav-link">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/candidates" class="nav-link">
+                <i class="fa-solid fa-users"></i>
+                <span>Candidates</span>
+            </a>
+
+            <a href="/pipeline" class="nav-link">
+                <i class="fa-solid fa-diagram-project"></i>
+                <span>Recruitment Pipeline</span>
+            </a>
+
+            <a href="/jobs" class="nav-link">
+                <i class="fa-solid fa-briefcase"></i>
+                <span>Job Openings</span>
+            </a>
+
+            <a href="/resume-screening" class="nav-link active">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>AI Resume Screening</span>
+                <span class="nav-badge">AI</span>
+            </a>
+
+            <a href="/resume-studio" class="nav-link">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>Resume Studio</span>
+            </a>
+
+            <a href="/documents" class="nav-link">
+                <i class="fa-solid fa-folder-open"></i>
+                <span>Documents</span>
+            </a>
+
+            <a href="/messages" class="nav-link">
+                <i class="fa-solid fa-comments"></i>
+                <span>Messages</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+                <p class="breadcrumb">
+                    Workspace / AI Resume Screening
+                </p>
+
+                <h2>AI Resume Analytics</h2>
+            </div>
+
+            <span class="top-avatar">EK</span>
+
+        </header>
+
+
+        <section class="page-intro">
+
+            <p class="analytics-heading">
+                INTELLIGENT RECRUITMENT PLATFORM
+            </p>
+
+            <h1>AI-Powered Resume Analysis</h1>
+
+            <p class="welcome-text">
+                Extract skills, analyse candidate profiles
+                and compare resumes with job requirements.
+            </p>
+
+        </section>
+
+
+        <!-- FLASH MESSAGES -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash-message">
+                        <i class="fa-solid fa-circle-check"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+
+        <!-- ERROR MESSAGE -->
+        {% if error %}
+            <div class="error-message">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                {{ error }}
+            </div>
+        {% endif %}
+
+
+        <!-- UPLOAD RESUMES -->
+        <section class="panel">
+
+            <h3>
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                Start Resume Analysis
+            </h3>
+
+            <p class="panel-description">
+                Upload resumes individually and analyse all candidates together.
+            </p>
+
+            <form method="POST"
+                  enctype="multipart/form-data">
+
+                <label class="form-label">
+                    Job Description
+                </label>
+
+                <textarea
+                    name="job_description"
+                    class="form-control"
+                    rows="6"
+                    placeholder="Enter job title, required skills, responsibilities and qualifications..."
+                    required>{{ job_description }}</textarea>
+
+                <label class="form-label">
+                    Upload One Candidate Resume (PDF or DOCX)
+                </label>
+
+                <input
+                    type="file"
+                    name="resume"
+                    class="form-control"
+                    accept=".pdf,.docx"
+                    required>
+
+                <button
+                    type="submit"
+                    name="action"
+                    value="add"
+                    class="primary-button">
+
+                    <i class="fa-solid fa-plus"></i>
+                    Add Resume
+
+                </button>
+
+            </form>
+
+
+            <div class="divider"></div>
+
+
+            <!-- UPLOADED RESUMES -->
+            <h3>
+                <i class="fa-solid fa-folder-open"></i>
+                Uploaded Resumes
+            </h3>
+
+            <p class="resume-count">
+                {{ staged_resumes|length }} resume(s) added
+            </p>
+
+
+            {% if staged_resumes %}
+
+                <div class="resume-list">
+
+                    {% for resume in staged_resumes %}
+
+                    <div class="resume-item">
+
+                        <div>
+                            <div class="resume-name">
+                                <i class="fa-solid fa-file-pdf"></i>
+                                {{ resume.filename }}
+                            </div>
+
+                            <div class="resume-date">
+                                Uploaded: {{ resume.uploaded_at }}
+                            </div>
+                        </div>
+
+                        <form method="POST">
+
+                            <input type="hidden"
+                                   name="job_description"
+                                   value="{{ job_description }}">
+
+                            <input type="hidden"
+                                   name="resume_id"
+                                   value="{{ resume.id }}">
+
+                            <button
+                                type="submit"
+                                name="action"
+                                value="remove"
+                                class="danger-button">
+
+                                <i class="fa-solid fa-trash"></i>
+                                Remove
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="button-row">
+
+                    <form method="POST">
+
+                        <input type="hidden"
+                               name="job_description"
+                               value="{{ job_description }}">
+
+                        <button
+                            type="submit"
+                            name="action"
+                            value="analyse"
+                            class="primary-button">
+
+                            <i class="fa-solid fa-brain"></i>
+                            Analyse All Resumes
+
+                        </button>
+
+                    </form>
+
+
+                    <form method="POST"
+                          onsubmit="return confirm('Remove all uploaded resumes?');">
+
+                        <input type="hidden"
+                               name="job_description"
+                               value="{{ job_description }}">
+
+                        <button
+                            type="submit"
+                            name="action"
+                            value="clear"
+                            class="secondary-button">
+
+                            <i class="fa-solid fa-trash"></i>
+                            Clear All
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-state">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <p>No resumes added yet.</p>
+                    <small>Choose a resume above and click Add Resume.</small>
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- SCREENING RESULTS -->
+        {% if results %}
+
+        <section class="panel">
+
+            <h3>
+                <i class="fa-solid fa-chart-column"></i>
+                Resume Screening Results
+            </h3>
+
+            {% set successful = results | selectattr('score', 'defined') | list %}
+
+            <p class="panel-description">
+                {{ successful|length }} resume(s) successfully analysed.
+            </p>
+
+
+            {% for result in results %}
+
+            <div class="result-card">
+
+                {% if result.error %}
+
+                    <div class="result-header">
+                        <h4>{{ result.filename }}</h4>
+                        <span style="color:#f87171;">
+                            Analysis failed
+                        </span>
+                    </div>
+
+                    <p class="footer-note">
+                        {{ result.error }}
+                    </p>
+
+                {% else %}
+
+                    <div class="result-header">
+
+                        <h4>
+                            <i class="fa-solid fa-user"></i>
+                            {{ result.filename }}
+                        </h4>
+
+                        <span class="result-score">
+                            {{ "%.1f"|format(result.score) }}%
+                        </span>
+
+                    </div>
+
+                    <div class="skill-section">
+
+                        <strong>
+                            <i class="fa-solid fa-check-circle"
+                               style="color:#4ade80;"></i>
+                            Matched Skills
+                        </strong>
+
+                        {% for skill in result.matched_skills %}
+
+                            <span class="skill-tag matched">
+                                {{ skill }}
+                            </span>
+
+                        {% else %}
+
+                            <span class="footer-note">
+                                No matched skills detected.
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="skill-section">
+
+                        <strong>
+                            <i class="fa-solid fa-circle-exclamation"
+                               style="color:#f87171;"></i>
+                            Missing Skills
+                        </strong>
+
+                        {% for skill in result.missing_skills %}
+
+                            <span class="skill-tag missing">
+                                {{ skill }}
+                            </span>
+
+                        {% else %}
+
+                            <span class="footer-note">
+                                No missing skills detected.
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="score-breakdown">
+
+                        <strong>Score Breakdown</strong>
+
+                        {% for key, value in result.score_breakdown.items() %}
+
+                            <div>
+                                {{ key|replace("_", " ")|title }}:
+                                {{ value }}%
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            {% endfor %}
+
+            <p class="footer-note">
+                AI screening scores are decision-support indicators,
+                not automatic hiring decisions.
+            </p>
+
+        </section>
+
+        {% endif %}
+
+
+        <footer class="footer">
+            <a href="/candidates">
+                <i class="fa-solid fa-users"></i>
+                View Candidates
+            </a>
+            <span>SmartRecruit AI Recruitment Platform</span>
+        </footer>
+
+    </main>
+
+</div>
+
+</body>
+</html>
