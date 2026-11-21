@@ -71,6 +71,7 @@ The platform combines recruitment management tools with AI-based resume screenin
 
 ---
 
+
 ## 📸 Application Screenshots
 
 ### Dashboard
@@ -80,13 +81,16 @@ The platform combines recruitment management tools with AI-based resume screenin
 ![Candidate Management](screenshots/candidates.png)
 
 ### AI Resume Screening
-![AI Resume Screening](screenshots/ai-screening.png)
+![AI Resume Screening](screenshots/ai_screening.png)
 
 ### Candidate Profile and AI Match
-![Candidate Profile](screenshots/candidate-profile.png)
+![Candidate Profile](screenshots/candidate_profile.png)
 
 ### Candidate List
-![Candidate List](screenshots/candidate-list.png)
+![Candidate List](screenshots/candidates_list.png)
+
+### Recruitment Pipeline
+![Recruitment Pipeline](screenshots/recruitment_pipeline.png)
 
 ---
 
